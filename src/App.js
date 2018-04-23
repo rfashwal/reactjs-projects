@@ -2,16 +2,36 @@ import React, { Component } from 'react';
 import './App.css';
 import UserInput from './1-basics/UserInput.js'
 import UserOutput from './1-basics/UserOutput.js'
+import ValidationComponent from './2-Lists/ValidationComponent'
+import CharComponent from './2-Lists/CharComponent'
 
 class App extends Component {
 
   state = {
-    userName : 'Rabieh'
+    userName : 'Rabieh',
+    inputText : '',
+    inputChars: []
   }
 
   changeUserNameHandler =(event)=>{
     this.setState({
       userName :event.target.value
+    });
+  }
+
+  inputTextChangehandler = (event)=>{
+    this.setState({
+      inputText : event.target.value,
+      inputChars: event.target.value.split('')
+    });
+  }
+
+  deleteCharHandler = (index)=>{
+    const chars = [...this.state.inputChars];
+    chars.splice(index, 1);
+    this.setState({
+      inputChars: chars,
+      inputText: chars.join("")
     });
   }
 
@@ -23,6 +43,25 @@ class App extends Component {
     textDecoration: 'none',
     border:'1px solid #777'
     };
+
+
+    let characters = null;
+    if(this.state.inputChars.length > 0)
+    {
+      characters = (
+        <div>
+          {
+            this.state.inputChars.map((character,index)=>{
+              return <CharComponent 
+                        key={index} 
+                        charValue={character}
+                        click={()=> this.deleteCharHandler(index)} />
+            })
+          }
+        </div>
+      )
+    }
+
     return (
       <div className="App">   
       <h2>ReactJs Basics</h2>
@@ -43,7 +82,7 @@ class App extends Component {
       <UserInput customStyle={style} userNameChanged={this.changeUserNameHandler} userName={this.state.userName}/>
 
       <h2>ReactJs Lists and Conditions</h2>
-      <h4>Below points are done to show the basic features of ReactJs</h4>
+      <h4>Below points are done to show Lists and Conditions functionality in ReactJs</h4>
         <ol className="custom-counter">
           <li>Create an input field (in App component) with a change listener which outputs the length of the entered text below it (e.g. in a paragraph).</li>
           <li>Create a new component (=> ValidationComponent) which receives the text length as a prop</li>
@@ -53,6 +92,9 @@ class App extends Component {
           <li>When you click a CharComponent, it should be removed from the entered text.</li>
         </ol>
         <p>Hint: Keep in mind that JavaScript strings are basically arrays!</p>
+        <input type='text' value={this.state.inputText} onChange={this.inputTextChangehandler} />
+        <ValidationComponent textLength={this.state.inputText.length}/>
+        {characters}
     </div>
     );
   }
